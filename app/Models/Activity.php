@@ -18,7 +18,11 @@ class Activity extends Model
         "host_id",
     ];
 
-    public function user(){
+    public function host(){
         return $this->belongsTo(User::class);
+    }
+
+    public function participants(){
+        return $this->belongsToMany(User::class, "activity_user");
     }
 }
