@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+
 class AuthController extends Controller
 {
     public function signup(Request $request){
@@ -17,9 +19,10 @@ class AuthController extends Controller
         $token = $user->createToken('auth-token')->plainTextToken;
 
         return response()->json([
-                "token" => $token
-            ]);
-            
+            "status" => "success",
+            "token" => $token,
+            "user" => $user
+        ],201);
     }
     public function login(Request $request){
         $validated = $request->validate([
@@ -27,9 +30,20 @@ class AuthController extends Controller
             "password" => "required|string|min:8|max:255"
         ]);
 
-        $user = User::where('email',$validated["email"])->get();
+        if (Auth::attempt(['email' => $validated['email'], 'password' => $validated['password']])){
+            $user = User::where('email',$validated["email"])->first();
+            $token = $user->createToken('auth-token')->plainTextToken;
+            return response()->json([
+                "status" => "success",
+                "token" => $token,
+                "user" => $user
+            ],200);
+        }
+
         return response()->json([
-            "user" => $user
-        ]);
+            "status" => "error",
+            "message" => "wrong credentials !"
+        ],401);
+            
     }
 }
