@@ -15,6 +15,12 @@ class AuthController extends Controller
             "name" => "nullable|string|min:8|max:255",
             "password" => "required|string|min:8|max:255",
         ]);
+        if (User::where('email',$request['email'])->exists()){
+            return response()->json([
+                "status" => "error",
+                "message" => "email already exists."
+            ],409);
+        }
         $user = User::create($validated);
         $token = $user->createToken('auth-token')->plainTextToken;
 
