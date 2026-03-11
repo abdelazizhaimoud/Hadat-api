@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Activity;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Activity;
 
 class ActivityController extends Controller
 {
@@ -17,41 +17,43 @@ class ActivityController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'title' => "required|string|min:8|max:255",
+            'category' => "required|string|min:8|max:255",
+            'location' => "required|string|min:8|max:255",
+            'date_time' => "required|date|min:8|max:255",
+            'max_participants' => "required|integer|min:8|max:255",
+            'host_id' => "required|integer",
+        ]);
+
+        $activity = Activity::create($validated);
+
+        return response()->json([
+            "status" => "success",
+            "activity" => $activity
+        ],201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Activity $activity)
+    public function show(string $id)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Activity $activity)
-    {
-        //
+        $activity = Activity::whereId($id)->first();
+        return response()->json([
+            "status" => "success",
+            "activity" => $activity
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Activity $activity)
+    public function update(Request $request, string $id)
     {
         //
     }
@@ -59,7 +61,7 @@ class ActivityController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Activity $activity)
+    public function destroy(string $id)
     {
         //
     }
