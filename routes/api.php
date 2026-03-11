@@ -15,6 +15,10 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::prefix('/activities')
     ->middleware('auth:sanctum')
     ->group( function(){
+
         Route::post('/', [ActivityController::class, 'store']);
         Route::get('/{id}', [ActivityController::class, 'show']);
+        Route::post('/{id}/join', [ActivityController::class, 'join']);
+        Route::delete('/{id}/leave', [ActivityController::class, 'leave']);
+
 });

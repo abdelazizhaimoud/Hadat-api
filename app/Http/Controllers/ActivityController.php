@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Activity;
+use PDO;
 
 class ActivityController extends Controller
 {
@@ -47,7 +48,7 @@ class ActivityController extends Controller
         return response()->json([
             "status" => "success",
             "activity" => $activity
-        ]);
+        ],200);
     }
 
     /**
@@ -64,5 +65,49 @@ class ActivityController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function join(string $id)
+    {
+        $user = auth()->user();
+
+        if ($user->hostedActivities()->where('activities.id',$id)->exists()){
+            return response()->json([
+                "status" => "error",
+                "message" => "user host this activity",
+            ],401);
+        }
+
+        if ($user->joinedActivities()->where('activities.id',$id)->exists()){
+            return response()->json([
+                "status" => "error",
+                "message" => "user already joined this activity !"
+            ],401);
+        }
+                
+        $user->joinedActivities()->attach($id);
+
+        return response()->json([
+            "status" => "success",
+            "message" => "joined successfully !"
+        ],200);
+    }
+
+
+    public function leave(string $id)
+    {
+        $user = auth()->user();
+        if ($user->joinedActivities()->where('activities.id',$id)->exists()){
+            $user->joinedActivities()->detach($id);
+            return response()->json([
+                "status" => "success",
+                "message" => "user left successfully !"
+            ],200);
+        }
+
+        return response()->json([
+            "status" => "error",
+            "message" => "uses isn't joined to this activity !"
+        ],401);
     }
 }
