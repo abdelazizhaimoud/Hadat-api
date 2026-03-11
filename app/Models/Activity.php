@@ -17,4 +17,8 @@ class Activity extends Model
         "max_participants",
         "host_id",
     ];
+
+    public function user(){
+        return $this->belongsTo(User::class);
+    }
 }
