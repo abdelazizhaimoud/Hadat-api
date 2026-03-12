@@ -14,7 +14,40 @@ class ActivityController extends Controller
      */
     public function index()
     {
-        //
+        $userId = auth()->user()->id;
+
+        $activities = Activity::with('participants')->where('host_id', '!=', $userId)->get()->map(function($activity) use ($userId){
+            $activity->joined = $activity->participants->contains('id',$userId);
+            return $activity;
+        });
+        return response()->json([
+            "status" => "success",
+            "activities" => $activities
+        ],200);
+    }
+
+    public function userActivities(Request $request)
+    {
+        $userId = auth()->user()->id;
+        $validated = $request->validate([
+            "filter" => "required|string",
+        ]);
+        $filter = $validated["filter"];
+        if ($filter == "hosted"){
+            $activities = Activity::where('host_id', $userId)->get();
+        }else if ($filter == "membre"){
+            $activities = Activity::whereHas('participants', function($query) use ($userId){
+                $query->where('user_id',$userId);
+            })->get();
+        }else if ($filter == "both"){
+            $activities = Activity::where('host_id', $userId)->orWhereHas('participants', function($query) use ($userId){
+                $query->where('user_id',$userId);
+                })->get();
+        }
+        return response()->json([
+            "status" => "success",
+            "activities" => $activities
+        ],200);
     }
 
     /**
@@ -22,12 +55,14 @@ class ActivityController extends Controller
      */
     public function store(Request $request)
     {
+        $userId = auth()->user()->id;
+        $request['host_id'] = $userId;
         $validated = $request->validate([
-            'title' => "required|string|min:8|max:255",
-            'category' => "required|string|min:8|max:255",
-            'location' => "required|string|min:8|max:255",
-            'date_time' => "required|date|min:8|max:255",
-            'max_participants' => "required|integer|min:8|max:255",
+            'title' => "required|string|min:3|max:255",
+            'category' => "required|string|max:255",
+            'location' => "required|string|max:255",
+            'date_time' => "required|date",
+            'max_participants' => "required|integer|max:20",
             'host_id' => "required|integer",
         ]);
 
