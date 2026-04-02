@@ -20,6 +20,7 @@ Route::prefix('/activities')
         Route::post('/', [ActivityController::class, 'store']);
         Route::get('/', [ActivityController::class, 'index']);
         Route::get('/me', [ActivityController::class, 'userActivities']);
+        Route::get('/search', [ActivityController::class, 'searchedActivities']);
         Route::get('/{id}', [ActivityController::class, 'show']);
         Route::post('/{id}/join', [ActivityController::class, 'join']);
         Route::delete('/{id}/leave', [ActivityController::class, 'leave']);

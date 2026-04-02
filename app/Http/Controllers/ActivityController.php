@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Activity;
+use Illuminate\Notifications\Action;
 use PDO;
 
 class ActivityController extends Controller
@@ -44,6 +45,22 @@ class ActivityController extends Controller
                 $query->where('user_id',$userId);
                 })->get();
         }
+        return response()->json([
+            "status" => "success",
+            "activities" => $activities
+        ],200);
+    }
+    public function searchedActivities(Request $request)
+    {
+        $userId = auth()->user()->id;
+        $validated = $request->validate([
+            "search" => "required|string",
+        ]);
+        $search = $validated["search"];
+        $activities = Activity::where('title','LIKE',"%$search%")->
+        orWhere('category','LIKE',"%$search%")->
+        orWhere('location','LIKE',"%$search%")->
+        get();
         return response()->json([
             "status" => "success",
             "activities" => $activities
