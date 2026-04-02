@@ -18,11 +18,17 @@ class Activity extends Model
         "host_id",
     ];
 
+    protected $appends = ['joined_count'];
+
     public function host(){
         return $this->belongsTo(User::class);
     }
 
     public function participants(){
         return $this->belongsToMany(User::class, "activity_user");
+    }
+
+    public function getJoinedCountAttribute() : int {
+        return $this->participants()->count();
     }
 }

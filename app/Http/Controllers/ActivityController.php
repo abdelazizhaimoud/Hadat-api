@@ -13,14 +13,30 @@ class ActivityController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $userId = auth()->user()->id;
+        $validated = $request->validate([
+            "search" => "nullable|string",
+            "category" => "nullable|string",
+        ]);
 
-        $activities = Activity::with('participants')->where('host_id', '!=', $userId)->get()->map(function($activity) use ($userId){
+        $activitiesQuery = Activity::with('participants')->where('host_id', '!=', $userId);
+
+        if ($validated["search"] !== null){
+            $searchValue = $validated['search'];
+            $activitiesQuery = $activitiesQuery->where('title','LIKE',"%$searchValue%")->
+            orWhere('location','LIKE',"%$searchValue%")->
+            orWhere('category','LIKE',"%$searchValue%");
+        }
+        if ($validated["category"] !== null){
+            $activitiesQuery->where('category','=',$validated['category']);
+        }
+        $activities = $activitiesQuery->get()->map(function($activity) use ($userId){
             $activity->joined = $activity->participants->contains('id',$userId);
             return $activity;
-        });
+        });;
+
         return response()->json([
             "status" => "success",
             "activities" => $activities
@@ -45,22 +61,6 @@ class ActivityController extends Controller
                 $query->where('user_id',$userId);
                 })->get();
         }
-        return response()->json([
-            "status" => "success",
-            "activities" => $activities
-        ],200);
-    }
-    public function searchedActivities(Request $request)
-    {
-        $userId = auth()->user()->id;
-        $validated = $request->validate([
-            "search" => "required|string",
-        ]);
-        $search = $validated["search"];
-        $activities = Activity::where('title','LIKE',"%$search%")->
-        orWhere('category','LIKE',"%$search%")->
-        orWhere('location','LIKE',"%$search%")->
-        get();
         return response()->json([
             "status" => "success",
             "activities" => $activities
