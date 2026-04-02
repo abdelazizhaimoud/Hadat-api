@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('activities', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->string('category');
+            $table->enum('category',['sport','outdoor','travel']);
             $table->string('location');
             $table->date('date_time');
             $table->integer('max_participants');
