@@ -80,6 +80,13 @@ class ActivityController extends Controller
     public function show(string $id)
     {
         $activity = Activity::whereId($id)->first();
+        if ($activity === null){
+            return response()->json([
+                "status" => "error",
+                "message" => "activity not found !"
+            ],404);
+        }
+        $activity->load('participants','host');
         return response()->json([
             "status" => "success",
             "activity" => $activity
