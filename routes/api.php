@@ -4,6 +4,7 @@ use App\Http\Controllers\ActivityController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -24,5 +25,10 @@ Route::prefix('/activities')
         Route::get('/{id}', [ActivityController::class, 'show']);
         Route::post('/{id}/join', [ActivityController::class, 'join']);
         Route::delete('/{id}/leave', [ActivityController::class, 'leave']);
-
-});
+        });
+        
+Route::prefix('/user')
+    ->middleware('auth:sanctum')
+    ->group( function(){
+        Route::put('/update', [UserController::class, 'update']);
+    });
