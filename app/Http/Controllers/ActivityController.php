@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Mail\MembreJoined;
 use Illuminate\Http\Request;
 use App\Models\Activity;
-use Illuminate\Notifications\Action;
-use PDO;
+use Illuminate\Support\Facades\Mail;
 
 class ActivityController extends Controller
 {
@@ -145,6 +145,10 @@ class ActivityController extends Controller
         }
                 
         $user->joinedActivities()->attach($id);
+        $activity = Activity::findOrFail($id);
+        $host = $activity->host;
+
+        Mail::to($host)->send(new MembreJoined($activity,$user));
 
         return response()->json([
             "status" => "success",
