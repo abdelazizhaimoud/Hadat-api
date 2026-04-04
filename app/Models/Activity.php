@@ -18,7 +18,7 @@ class Activity extends Model
         "host_id",
     ];
 
-    protected $appends = ['joined_count'];
+    protected $appends = ['joined_count','hosted'];
 
     public function host(){
         return $this->belongsTo(User::class);
@@ -30,5 +30,9 @@ class Activity extends Model
 
     public function getJoinedCountAttribute() : int {
         return $this->participants()->count();
+    }
+
+    public function getHostedAttribute() : bool {
+        return $this->host_id === auth()->user()->id;
     }
 }
