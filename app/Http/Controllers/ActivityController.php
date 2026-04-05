@@ -7,6 +7,7 @@ use App\Mail\MembreJoined;
 use Illuminate\Http\Request;
 use App\Models\Activity;
 use Illuminate\Support\Facades\Mail;
+use App\Models\User;
 
 class ActivityController extends Controller
 {
@@ -176,6 +177,24 @@ class ActivityController extends Controller
         return response()->json([
             "status" => "error",
             "message" => "uses isn't joined to this activity !"
+        ],401);
+    }
+
+    public function removeMembre(Request $request, string $id)
+    {
+        $user = User::findOrFail($id);
+        $activityId = $request["activityId"];
+        if ($user->joinedActivities()->where('activities.id',$activityId)->exists()){
+            $user->joinedActivities()->detach($activityId);
+            return response()->json([
+                "status" => "success",
+                "message" => "user removed successfully !"
+            ],200);
+        }
+
+        return response()->json([
+            "status" => "error",
+            "message" => "uses didn't joined this activity !"
         ],401);
     }
 }

@@ -25,6 +25,7 @@ Route::prefix('/activities')
         Route::get('/{id}', [ActivityController::class, 'show']);
         Route::post('/{id}/join', [ActivityController::class, 'join']);
         Route::delete('/{id}/leave', [ActivityController::class, 'leave']);
+        Route::delete('/remove/{id}', [ActivityController::class, 'removeMembre']);
         });
         
 Route::prefix('/user')
