@@ -57,4 +57,8 @@ class User extends Authenticatable
     public function joinedActivities(){
         return $this->belongsToMany(Activity::class, 'activity_user');
     }
+
+    public function comments(){
+        return $this->hasMany(Comment::class);
+    }
 }

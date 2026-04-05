@@ -36,4 +36,8 @@ class Activity extends Model
     public function getHostedAttribute() : bool {
         return $this->host_id === auth()->user()->id;
     }
+
+    public function comments(){
+        return $this->hasMany(Comment::class);
+    }
 }
