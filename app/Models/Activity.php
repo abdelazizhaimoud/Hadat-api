@@ -15,6 +15,7 @@ class Activity extends Model
         "location",
         "date_time",
         "max_participants",
+        "status",
         "host_id",
     ];
 

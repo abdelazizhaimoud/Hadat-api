@@ -21,7 +21,7 @@ class ActivityController extends Controller
             "category" => "nullable|string",
         ]);
 
-        $activitiesQuery = Activity::with('participants')->where('host_id', '!=', $userId);
+        $activitiesQuery = Activity::with('participants')->where('status','!=','cancelled')->where('host_id', '!=', $userId);
 
         if ($validated["search"] !== null){
             $searchValue = $validated['search'];
@@ -115,7 +115,12 @@ class ActivityController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $activity = Activity::findOrFail($id);
+        $activity->update($request['activity']);
+        return response()->json([
+            "status" => "success",
+            "activity" => $activity
+        ]);
     }
 
     /**
