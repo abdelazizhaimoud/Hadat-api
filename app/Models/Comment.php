@@ -16,10 +16,10 @@ class Comment extends Model
     ];
 
     public function user(){
-        return $this->belongTo(User::class);
+        return $this->belongsTo(User::class);
     }
 
     public function activity(){
-        return $this->belongTo(Activity::class);
+        return $this->belongsTo(Activity::class);
     }
 }

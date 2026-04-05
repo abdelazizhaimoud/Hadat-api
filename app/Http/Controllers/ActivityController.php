@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Mail\MembreJoined;
 use Illuminate\Http\Request;
 use App\Models\Activity;
+use App\Models\Comment;
 use Illuminate\Support\Facades\Mail;
 use App\Models\User;
 
@@ -22,7 +23,7 @@ class ActivityController extends Controller
             "category" => "nullable|string",
         ]);
 
-        $activitiesQuery = Activity::with('participants')->where('status','!=','cancelled')->where('host_id', '!=', $userId);
+        $activitiesQuery = Activity::with('participants','comments.user:id,name,avatar,email')->where('status','!=','cancelled')->where('host_id', '!=', $userId);
 
         if ($validated["search"] !== null){
             $searchValue = $validated['search'];
@@ -52,16 +53,17 @@ class ActivityController extends Controller
         ]);
         $filter = $validated["filter"];
         if ($filter == "hosted"){
-            $activities = Activity::where('host_id', $userId)->get();
+            $activitiesQuery = Activity::where('host_id', $userId);
         }else if ($filter == "membre"){
-            $activities = Activity::whereHas('participants', function($query) use ($userId){
+            $activitiesQuery = Activity::whereHas('participants', function($query) use ($userId){
                 $query->where('user_id',$userId);
-            })->get();
+            });
         }else if ($filter == "both"){
-            $activities = Activity::where('host_id', $userId)->orWhereHas('participants', function($query) use ($userId){
+            $activitiesQuery = Activity::where('host_id', $userId)->orWhereHas('participants', function($query) use ($userId){
                 $query->where('user_id',$userId);
-                })->get();
+                });
         }
+        $activities = $activitiesQuery->with("participants","comments.user:id,name,email,avatar")->get();
         return response()->json([
             "status" => "success",
             "activities" => $activities
@@ -196,5 +198,21 @@ class ActivityController extends Controller
             "status" => "error",
             "message" => "uses didn't joined this activity !"
         ],401);
+    }
+
+    public function comment(Request $request, string $id)
+    {
+        $userId = request()->user()->id;
+        $validated = $request->validate([
+            "content" => "required|string"
+        ]);
+        $validated["user_id"] = $userId;
+        $validated["activity_id"] = $id;
+        $comment = Comment::create($validated);
+
+        return response()->json([
+            "status" => "success",
+            "message" => "comment created !"
+        ],201);
     }
 }

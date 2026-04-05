@@ -16,9 +16,9 @@ return new class extends Migration
             $table->foreignId("user_id")->constrained("users")->onDelete("cascade");
             $table->foreignId("activity_id")->constrained("activities")->onDelete("cascade");
             $table->string("content");
-            $table->integer("likes");
-            $table->integer("dislikes");
-            $table->integer("shares");
+            $table->integer("likes")->default(0);
+            $table->integer("dislikes")->default(0);
+            $table->integer("shares")->default(0);
             $table->timestamps();
         });
     }

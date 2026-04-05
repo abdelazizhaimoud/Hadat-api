@@ -4,6 +4,7 @@ use App\Http\Controllers\ActivityController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\UserController;
 
 Route::get('/user', function (Request $request) {
@@ -26,6 +27,9 @@ Route::prefix('/activities')
         Route::post('/{id}/join', [ActivityController::class, 'join']);
         Route::delete('/{id}/leave', [ActivityController::class, 'leave']);
         Route::delete('/remove/{id}', [ActivityController::class, 'removeMembre']);
+
+        // comment
+        Route::post('/{id}/comment', [ActivityController::class, 'comment']);
         });
         
 Route::prefix('/user')
