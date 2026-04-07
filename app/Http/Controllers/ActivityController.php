@@ -215,4 +215,13 @@ class ActivityController extends Controller
             "message" => "comment created !"
         ],201);
     }
+
+    public function deleteComment(string $id)
+    {
+        $comment = Comment::findOrFail($id)->delete();
+        return response()->json([
+            "status" => "success",
+            "message" => "comment deleted !"
+        ],204);
+    }
 }
