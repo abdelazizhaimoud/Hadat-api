@@ -28,8 +28,11 @@ Route::prefix('/activities')
         Route::delete('/{id}/leave', [ActivityController::class, 'leave']);
         Route::delete('/remove/{id}', [ActivityController::class, 'removeMembre']);
 
-        // comment
+        // activity comment
         Route::post('/{id}/comment', [ActivityController::class, 'comment']);
+        
+        // comments
+        Route::delete('/comments/{id}', [ActivityController::class, 'deleteComment']);
         });
         
 Route::prefix('/user')
