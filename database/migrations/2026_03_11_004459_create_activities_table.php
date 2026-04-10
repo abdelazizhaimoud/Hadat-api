@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->enum('category',['sport','outdoor','travel']);
-            $table->string('location');
+            $table->string('city');
             $table->date('date_time');
             $table->integer('max_participants');
             $table->enum('status',["active","cancelled","completed"])->default("active");

@@ -28,7 +28,7 @@ class ActivityController extends Controller
         if ($validated["search"] !== null){
             $searchValue = $validated['search'];
             $activitiesQuery = $activitiesQuery->where('title','LIKE',"%$searchValue%")->
-            orWhere('location','LIKE',"%$searchValue%")->
+            orWhere('city','LIKE',"%$searchValue%")->
             orWhere('category','LIKE',"%$searchValue%");
         }
         if ($validated["category"] !== null){
@@ -80,7 +80,7 @@ class ActivityController extends Controller
         $validated = $request->validate([
             'title' => "required|string|min:3|max:255",
             'category' => "required|string|max:255",
-            'location' => "required|string|max:255",
+            'city' => "required|string|max:255",
             'date_time' => "required|date",
             'max_participants' => "required|integer|max:20",
             'host_id' => "required|integer",
