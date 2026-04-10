@@ -13,6 +13,8 @@ class Activity extends Model
         "title",
         "category",
         "city",
+        "latitude",
+        "longitude",
         "date_time",
         "max_participants",
         "status",
