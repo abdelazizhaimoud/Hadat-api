@@ -12,7 +12,9 @@ class Activity extends Model
     protected $fillable = [
         "title",
         "category",
-        "location",
+        "city",
+        "latitude",
+        "longitude",
         "date_time",
         "max_participants",
         "status",
